@@ -8,6 +8,9 @@ import beast.core.Description;
 
 import beast.evolution.speciation.SABirthDeathModel;
 import beast.evolution.tree.*;
+import evolution.tree.SRTree;
+
+import static com.sun.tools.doclint.Entity.lambda;
 
 /**
  * @author Alexandra Gavryushkina

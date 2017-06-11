@@ -3,6 +3,7 @@ package beast.evolution.tree;
 import beast.core.Input;
 import beast.core.StateNode;
 import beast.core.StateNodeInitialiser;
+import beast.evolution.tree.SRNode;
 import sranges.StratigraphicRange;
 import java.util.ArrayList;
 import java.util.List;
