@@ -8,7 +8,7 @@ import beast.core.Description;
 
 import beast.evolution.speciation.SABirthDeathModel;
 import beast.evolution.tree.*;
-import evolution.tree.SRTree;
+import beast.evolution.tree.SRTree;
 
 import static com.sun.tools.doclint.Entity.lambda;
 
@@ -28,9 +28,25 @@ public class SRangesBirthDeathModel extends SABirthDeathModel {
         return Math.sqrt(Math.exp(t*(lambda + mu + psi))*q(t,c1,c2));
     }
 
+    private double log_q(double t, double c1, double c2) {
+        return Math.log(q(t,c1,c2));
+    }
+
     private double log_q_tilde(double t, double c1, double c2) {
         return 0.5*(t*(lambda + mu + psi) + log_q(t,c1,c2));
     }
+
+    private double log_oneMinusP0(double t, double c1, double c2) {
+        return Math.log(oneMinusP0(t,c1,c2));
+    }
+
+    private double log_oneMinusP0Hat(double t, double c1, double c2) {
+        return Math.log(oneMinusP0Hat(t,c1,c2));
+    }
+
+    private double log_p0s(double t, double c1, double c2) {
+        return Math.log(p0s(t,c1,c2));
+            }
 
     @Override
     public double calculateTreeLogLikelihood(TreeInterface tree)
