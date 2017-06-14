@@ -1,0 +1,79 @@
+<beast version="2.0"
+    namespace="
+        beast.util
+        :beast.core.parameter
+        :beast.evolution.tree.coalescent
+        :beast.evolution.tree
+        :beast.evolution.alignment
+        :feast.mapping
+        :srvalidate">
+
+    <data id="alignment" name="alignment">
+        <sequence id="seq_Ay" taxon="Ay" value="?"/>
+        <sequence id="seq_Ao" taxon="Ao" value="?"/>
+        <sequence id="seq_By" taxon="By" value="?"/>
+        <sequence id="seq_Bo" taxon="Bo" value="?"/>
+    </data>
+
+    <taxonset spec="TaxonSet">
+        <taxon id="Ay" spec="Taxon"/>
+        <taxon id="Ao" spec="Taxon"/>
+        <taxon id="By" spec="Taxon"/>
+        <taxon id="Bo" spec="Taxon"/>
+    </taxonset>
+
+    <tree id="tree" spec="SRTreeParser" nodetype="beast.evolution.tree.SRNode" name="stateNode" newick="((Ay:1.0,Ao:0.0):1.0,(By:1.0,Bo:0.0):0.5):0.0;">
+        <trait id="dateTrait.t:tree" spec="beast.evolution.tree.TraitSet" traitname="date-backward">
+            Ay = 0.0,
+            Ao = 1.0,
+            By = 0.5,
+            Bo = 1.5
+            <taxa id="TaxonSet.penguins" spec="TaxonSet" alignment="@alignment"/>
+        </trait>
+
+        <taxonset idref="TaxonSet.penguins"/>
+        <stratigraphicRange id="A_range" spec="sranges.StratigraphicRange" firstOccurrence="@Ao" lastOccurrence="@Ay"/>
+        <stratigraphicRange id="B_range" spec="sranges.StratigraphicRange" firstOccurrence="@Bo" lastOccurrence="@By"/>
+    </tree>
+    
+    <run spec="DensityMapper">
+
+        <realParam spec="RealParameter" id="psi" value="0.5" lower="0.1" upper="1.0"/>
+        <steps spec="IntegerParameter" value="20"/>
+
+        <distribution id="sashasDensity" spec="speciation.SRangesBirthDeathModel" tree="@tree" conditionOnRhoSampling="true">
+            <origin id="origin" spec="RealParameter" value="3.0"/>
+
+            <birthRate spec="RealParameter" value="1.0"/>
+            <deathRate spec="RealParameter" value="0.1"/>
+            <samplingRate idref="psi"/>
+            <removalProbability spec="RealParameter" value="0.0"/>
+            <rho spec="RealParameter" value="0.1"/>
+        </distribution>
+
+        <distribution id="timsDensity" spec="SRTreeDensity">
+            <lambda spec="RealParameter" value="1.0"/>
+            <mu spec="RealParameter" value="0.1"/>
+            <psi idref="psi"/>
+            <rho spec="RealParameter" value="0.1"/>
+            <x0 spec="RealParameter" value="3.0"/>
+
+            <tree spec="TreeParser" newick="(0:2.0,1:1.5):0.0;" offset="0" adjustTipHeights="false"/>
+            <sranges spec="RealParameter" dimension="2" value="1.0 1.0"/>
+            <unobsSpecTimes spec="RealParameter" dimension="2" value="0.0 0.0"/> <!-- Unused here -->
+        </distribution>
+
+        <logger fileName="$(filebase).log" logEvery="1">
+            <log idref="psi"/>
+            <log idref="sashasDensity"/>
+            <log idref="timsDensity"/>
+        </logger>
+
+        <logger id="screenlog" logEvery="1">
+            <log idref="psi"/>
+            <log idref="sashasDensity"/>
+            <log idref="timsDensity"/>
+        </logger>
+    </run>
+
+</beast>
