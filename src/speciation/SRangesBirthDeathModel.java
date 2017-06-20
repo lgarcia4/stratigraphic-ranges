@@ -24,6 +24,11 @@ import static com.sun.tools.doclint.Entity.lambda;
         "Bayesian total-evidence dating under the fossilized birth-death model with stratigraphic ranges.")
 public class SRangesBirthDeathModel extends SABirthDeathModel {
 
+
+    public double q(double t, double c1, double c2) {
+        return 4 * Math.exp(-c1 * t) / (Math.exp(-c1 * t) * (1 - c2) + (1 - c2) * (1 - c2));
+    }
+
     private double q_tilde(double t, double c1, double c2) {
         return Math.sqrt(Math.exp(t*(lambda + mu + psi))*q(t,c1,c2));
     }
@@ -96,14 +101,14 @@ public class SRangesBirthDeathModel extends SABirthDeathModel {
 
         double logPost;
         if (!conditionOnRootInput.get()){
-            logPost = -log_q(x0, c1, c2);
+            logPost = log_q(x0, c1, c2);
         } else {
             if (tree.getRoot().isFake()){   //when conditioning on the root we assume the process
                 //starts at the time of the first branching event and
                 //that means that the root can not be a sampled ancestor
                 return Double.NEGATIVE_INFINITY;
             } else {
-                logPost = -log_q(x1, c1, c2);
+                logPost = log_q(x1, c1, c2);
             }
         }
 
@@ -141,13 +146,13 @@ public class SRangesBirthDeathModel extends SABirthDeathModel {
                     Node parent = node.getParent();
                     child = node.getNonDirectAncestorChild();
                     if (parent != null && ((SRTree)tree).belongToSameSRange(parent,node)) {
-                        logPost += log_q_tilde(node.getHeight(), c1, c2) - log_q(node.getHeight(), c1, c2);
+                        logPost += log_q_tilde(node.getHeight(), c1, c2) + log_q(node.getHeight(), c1, c2);
                     }
                     if (child != null && ((SRTree)tree).belongToSameSRange(node, child)) {
-                        logPost += log_q(node.getHeight(), c1, c2)-  log_q_tilde(node.getHeight(), c1, c2);
+                        logPost += -log_q(node.getHeight(), c1, c2)-  log_q_tilde(node.getHeight(), c1, c2);
                     }
                 } else {
-                    logPost += Math.log(lambda) - log_q(node.getHeight(), c1, c2);
+                    logPost += Math.log(lambda) + log_q(node.getHeight(), c1, c2);
                     child = node.getLeft();
                 }
                 if (((SRTree)tree).belongToSameSRange(node, child)) { //This term accounts for not including fossil samples within a stratigraphic range.
