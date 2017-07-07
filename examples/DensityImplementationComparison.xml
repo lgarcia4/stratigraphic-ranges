@@ -38,8 +38,8 @@
     
     <run spec="DensityMapper">
 
-        <realParam spec="RealParameter" id="psi" value="0.5" lower="0.1" upper="1.0"/>
-        <steps spec="IntegerParameter" value="20"/>
+        <realParam spec="RealParameter" id="psi" value="0.1" lower="0.1" upper="8.0"/>
+        <steps spec="IntegerParameter" value="80"/>
 
         <distribution id="sashasDensity" spec="speciation.SRangesBirthDeathModel" tree="@tree" conditionOnRhoSampling="true">
             <origin id="origin" spec="RealParameter" value="3.0"/>
@@ -54,7 +54,7 @@
         <distribution id="timsDensity" spec="SRTreeDensity">
             <lambda spec="RealParameter" value="1.0"/>
             <mu spec="RealParameter" value="0.1"/>
-            <psi idref="psi"/>
+             <psi idref="psi"/>
             <rho spec="RealParameter" value="0.1"/>
             <x0 spec="RealParameter" value="3.0"/>
 
